@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+<html lang="pl" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Tomasz Sasiak">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"> <!-- skaluje rozmiar strony do urządzenia -->
+    <!--<meta http-equiv="refresh" content="150">   automatycznie odświeża stronę po wskazanym czasie ;) -->
+
+    <link rel="icon" type="image/x-icon" href={% static 'pyramid.png' %}>
+
+    <style>
+        html{
+		background-color: rgb(173, 216, 230);
+
+		/*background-image: url("{% static 'piramida.jpg' %}");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            background-attachment: fixed;*/
+
+            font-family: "Trebuchet MS", "Roboto Mono", system-ui, sans-serif
+        }
+
+        .main-container {
+            width: 100%
+        }
+
+
+        .main-container  div{
+            background-color: rgba(70, 130, 180, 0.4);
+            border-style: solid;
+            border-radius: 15px;
+            border-color: white;
+            border-width: 0.1em;
+            padding: 1em;
+            margin: 1em;
+        }
+
+
+        #tytul{
+            color: white;
+        }
+
+        .pole-wyszukaj{
+            width: max-content
+        }
+
+        [type="search"]{
+            border-radius: 15px;
+            height: 2em;
+            padding: 0.5em;
+            margin: 0em 1em 0em 1em;
+            cursor: pointer
+        }
+
+        [type="search"]:hover {
+            background-color: rgba(70, 130, 180, 0.7);
+            transition: 0.4s ease
+        }
+
+
+        [type="date"]{
+            border-radius: 15px;
+            height: 1em;
+            padding: 0.5em;
+            margin: 0em 1em 0em 1em;
+            cursor: pointer
+        }
+
+        [type="date"]:hover {
+            background-color: rgba(70, 130, 180, 0.7);
+            transition: 0.4s ease
+        }
+
+        .slowa-kluczowe {display: inline-block; padding: 0px; margin: 0px}
+
+        .main-container .flex-hidden{
+            display: flex;
+            background-color: transparent;
+            border-style: none;
+            border-color: none;
+            border-width: 0em;
+            padding: 0px;
+            margin: 0px;
+
+            flex-wrap: wrap;
+
+            justify-content: flex-start;
+            visibility: hidden;
+            overflow: hidden;
+            max-height: 0;
+            transform: scaleY(0)
+        }
+
+        .kontrola-checkbox {
+            display: grid;
+            margin: 0.5em 0em 0.5em 0em;
+            grid-template-columns: 1em auto;
+            gap: 0.5em;
+            border-radius: 15px;
+            cursor: pointer
+        }
+
+        .kontrola-checkbox [type="checkbox"] {
+            height:15px;
+            width: 15px;
+            cursor: pointer
+        }
+
+
+
+        .kontrola-checkbox:hover {
+            background-color: rgba(70, 130, 180, 0.7);
+            transition: 0.4s ease
+        }
+
+        .button{
+            /*font-family: Aldrich, "Roboto Mono", system-ui, sans-serif;*/
+            font-size: 1em;
+            background-color: white;
+            border-style: solid;
+            border-radius: 15px;
+            border-color: steelblue;
+            border-width: 0.1em;
+            padding: 1em;
+            margin: 1em;
+
+            cursor: pointer
+        }
+
+        .button:hover {
+            background-color: rgba(70, 130, 180, 0.7);
+            transition: 0.4s ease
+        }
+
+        .button-small {
+            /*font-family: Aldrich, "Roboto Mono", system-ui, sans-serif;*/
+            font-size: 1em;
+            background-color: white;
+            border-style: solid;
+            border-radius: 15px;
+            border-color: steelblue;
+            border-width: 0.1em;
+            padding: 0.5em;
+            margin: ;
+
+            cursor: pointer
+        }
+
+        .button-small:hover {
+            background-color: rgba(70, 130, 180, 0.7);
+            transition: 0.4s ease
+        }
+
+        .Checkbox{
+
+            opacity: 0;
+            cursor: pointer;
+            display: inline-block;
+            position: absolute;
+            height: 50px;
+            width: 95%;
+
+        }
+
+        .main-container .ikonka-ptaszek{
+            display: inline-block;
+            position: relative;
+            z-index:-1;
+            background-image: url('{% static "expand.png" %}');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: transparent;
+            border-style: none;
+            border-color: none;
+            border-width: 0em;
+            padding: 0px;
+            margin: 0px;
+            height: 1em;
+            width: 50px;
+        }
+
+        .Checkbox:checked + .ikonka-ptaszek {
+                    transform: rotate(540deg);
+                    transition: 0.4s ease;
+            }
+
+        .Checkbox:checked ~ .flex-hidden {
+                    visibility: visible;
+                    max-height: 100%;
+                    transform: scaleY(1);
+                    transition: 0.4s ease
+            }
+
+	.main-container .flex-hidden-info{
+            display: flex;
+            background-color: transparent;
+            border-style: none;
+            border-color: none;
+            border-width: 0em;
+            padding: 0px;
+            margin: 0px;
+            flex-direction: column;
+            flex-wrap: wrap;
+
+            justify-content: flex-start;
+            visibility: hidden;
+            overflow: hidden;
+            max-height: 0;
+            transform: scaleY(0)
+        }
+        .Checkbox:checked ~ .flex-hidden-info {
+                    visibility: visible;
+                    max-height: 100%;
+                    transform: scaleY(1);
+                    transition: 0.4s ease
+            }
+
+    </style>
+
+
+    <title>Baza orzeczeń DOZIK</title>
+
+
+</head>
+<body>
+    <div class="main-container">
+
+
+            <div id="tytul">
+                <h1>Baza orzeczeń Departamentu Ochrony Zbiorowych Interesów Konsumentów</h1>
+            </div>
+
+
+        <form action="/results/" method="POST">
+
+            {% csrf_token %}
+            <input type="submit" class="button" name="full_base" value="Wyświetl wszystkie dostępne rozstrzygnięcia w bazie">
+
+        </form>
+        <div>
+                <input type="checkbox" class="Checkbox">
+                <div class="ikonka-ptaszek">
+                </div>
+                <p class="slowa-kluczowe">Jak działa baza?</p>
+                <div class="flex-hidden-info">
+                    <p>W bazie znajdują się orzeczenia, które trafiają do nas z departamentu prawnego.</p>
+                    <p>Baza podzielona jest na trzy moduły wyszukiwania:</p>
+                    <p>I.	„Wyszukaj sygnaturę orzeczenia” – podana fraza wyszukiwana wśród sygnatur orzeczeń wprowadzonych do bazy.</p>
+                    <p>II.	„Wyszukaj numer decyzji” – podana fraza wyszukiwana wśród numerów decyzji wprowadzonych do bazy.</p>
+                    <p>Wyszukiwanie wg sygnatury i wg numeru decyzji służy do „punktowego” odnajdywania interesującego Cię rozstrzygnięcia. Podane frazy nie są wyszukiwane w innych częściach bazy (np. Tezach sądu).
+                    Wielkość znaków się nie liczy, ale spacje mają znaczenie:</p>
+                        <ul>"II SAB/Wa 307/21" zostanie odnalezione tak samo jak "II sab/wa 307/21", natomiast "II   SAB / Wa 307 / 21" nie zostanie odnalezione.</ul>
+
+                    <p>III.	„Kryteria szczegółowe” – jest to osobny formularz, który pozwala „miksować” podaną frazę, zakres dat oraz słowa kluczowe przy wyszukiwaniu.
+                    Baza została zaprojektowana ze szczególnym naciskiem na wykorzystanie słów kluczowych. Kluczowe dla indeksowania orzeczeń słowami kluczowymi jest to czy w orzeczeniu sąd odniósł się do danego zagadnienia.</p>
+                    <p>Pole „Wyszukaj w opisie rozstrzygnięcia” pozwala wyszukać podaną frazę w częściach bazy:</p>
+                        <ul>„Nazwa Przedsiębiorcy”</ul>
+                        <ul>„Praktyki / klauzule / zachowania bezprawne stwierdzone przez DOZiK”</ul>
+                        <ul>„Główne zarzuty strony”</ul>
+                        <ul>„Tezy sądu”</ul>
+                    <p>Podobnie jak wyżej wielkość znaków się nie liczy, ale spacje mają znaczenie.</p>
+                    <p>Jeżeli chcesz zawęzić wyszukiwanie wg dat rozstrzygnięć pamiętaj, aby podać ich zakres tj. zarówno datę „od” jak i datę „do”.</p>
+                    <p>W panelu „Wyszukaj wg słów kluczowych” możesz zaznaczyć dowolną ilość zagadnień. Wyszukiwanie łączy zaznaczone słowa kluczowe operatorem logicznym LUB. Oznacza to, że w wynikach wyszukiwania zostaną zamieszczone wszystkie orzeczenia, do których przypisałem CO NAJMNIEJ jedno z zaznaczonych słów kluczowych.</p>
+                    <p>Wyszukiwanie zawężone pozwala zamienić operator logiczny na „i” przez co w wynikach wyświetlą się orzeczenia oznaczone wszystkimi słowami kluczowymi łącznie.</p>
+                    <p>Ostatnią z opcji jest pomijanie słów kluczowych. Jeżeli wybierzesz ich więcej niż jedno to pamiętaj, że przy odrzucaniu z wyników wyszukiwania występuje między nimi operator logiczny LUB. Wystarczy więc aby jedno z odrzucanych słów kluczowych wystąpiło przy orzeczeniu, aby takiego orzeczenia nie wyświetlać. Jeżeli uważasz, że przydałoby się łączyć odrzucane słowa operatorem „i” daj mi znać, a dodam taką możliwość.</p>
+                    <p>Ze względu na jakość plików otrzymywanych przez nasz departament na razie nie ma możliwości wyszukiwania w całych tekstach orzeczeń.</p>
+
+
+                    <p>Jeżeli masz:</p>
+                        <ul>- orzeczenie, które wg Ciebie powinno znaleźć się w bazie</ul>
+                        <ul>- uwagi do działania bazy</ul>
+                        <ul>- uwagi do szaty graficznej</ul>
+                    <p>pisz proszę na maila tomasz.sasiak@uokik.gov.pl</p>
+                </div>
+        </div>
+
+            <div style="font-weight: bold">
+                Kryteria wyszukiwania:
+            </div>
+
+
+        <form action="/results/" method="POST">
+            {% csrf_token %}
+            <div class="pole-wyszukaj">
+                Wyszukaj sygnaturę orzeczenia: <input type="search" name="act_signature">
+                <button class="button-small" type="submit" value="Submit">Wyszukaj</button>
+            </div>
+        </form>
+
+        <form action="/results/" method="POST">
+            {% csrf_token %}
+            <div class="pole-wyszukaj">
+                Wyszukaj numer decyzji: <input type="search" name="dec_number">
+                <button class="button-small" type="submit" value="Submit">Wyszukaj</button>
+            </div>
+        </form>
+
+            <div style="font-weight: bold">
+                Kryteria szczegółowe:
+            </div>
+
+        <form action="/results/" method="POST">
+            {% csrf_token %}
+            <div class="pole-wyszukaj">
+                Wyszukaj w opisie rozstrzygnięcia: <input type="search" name="description">
+            </div>
+            <div class="pole-wyszukaj" style="display: flex; flex-wrap: wrap; padding:0px; width: auto">
+                <div style="border: none; background: transparent; margin=0px; padding: 0px">Wyszukaj przedsiębiorcę (1): <input type="search" name="company-1"></div>
+                <div style="border: none; background: transparent; margin=0px; padding: 0px">Wyszukaj przedsiębiorcę (2): <input type="search" name="company-2"></div>
+                <div style="border: none; background: transparent; margin=0px; padding: 0px">Wyszukaj przedsiębiorcę (3): <input type="search" name="company-3"></div>
+                <div style="border: none; background: transparent; margin=0px; padding: 0px">Wyszukaj przedsiębiorcę (4): <input type="search" name="company-4"></div>
+                <div style="border: none; background: transparent; margin=0px; padding: 0px">Wyszukaj przedsiębiorcę (5): <input type="search" name="company-5"></div>
+            </div>
+
+
+            <div class="pole-wyszukaj">
+                Wyszukaj wg dat: od <input type="date" name="data-od"> do <input type="date" name="data-do">
+            </div>
+
+
+            <div style="display: flex; flex-wrap: wrap; padding:0px; width: auto">
+                <div style="border: none; background: transparent; margin=0px; padding: 0px">
+                    Wyszukaj wg sądu:
+                </div>
+                {% block content_0%}
+                    {% for c in court %}
+
+                        <div style="border: none; background: transparent; margin=0px; padding: 0px">
+                            <label >
+                                <input type="checkbox" name="{{ c.abbreviation }}"> {{c.court}}
+                            </label>
+                        </div>
+
+                    {% endfor %}
+                {% endblock %}
+            </div>
+
+            <div style="display: flex; flex-wrap: wrap; padding:0px; width: auto">
+                <div style="border: none; background: transparent; margin=0px; padding: 0px">
+                    Wyszukaj wg zakresu:
+                </div>
+                {% block content_1%}
+                    {% for s in scope %}
+
+                        <div style="border: none; background: transparent; margin=0px; padding: 0px">
+                            <label >
+                                <input type="checkbox" name="{{ s }}scope"> {{s.scope}}
+                            </label>
+                        </div>
+
+                    {% endfor %}
+                {% endblock %}
+            </div>
+
+            <div style="display: flex; flex-wrap: wrap; padding:0px; width: auto">
+                <div style="border: none; background: transparent; margin=0px; padding: 0px">
+                    Wyszukaj wg branży:
+                </div>
+                {% block content_2%}
+                    {% for i in industry %}
+
+                        <div style="border: none; background: transparent; margin=0px; padding: 0px">
+                            <label >
+                                <input type="checkbox" name="{{ i }}industry"> {{i.industry}}
+                            </label>
+                        </div>
+
+                    {% endfor %}
+                {% endblock %}
+            </div>
+
+
+            <div>
+                <input type="checkbox" class="Checkbox">
+                <div class="ikonka-ptaszek">
+                </div>
+                <p class="slowa-kluczowe">Wyszukaj wg słów kluczowych:</p>
+                <div class="flex-hidden">
+                    {% block content_3 %}
+                    {% for tag_cat in tag_category %}
+                        {% if tag_cat == "Przedmiot rozstrzygnięcia"%}
+                        <div>
+                            {{tag_cat}}:
+                                {% for tag in tags %}
+                                {% if tag.category == tag_cat %}
+                                <label class="kontrola-checkbox">
+                                    <input type="checkbox" name="{{ tag.id }}"> {{tag.tag}}
+                                </label>
+                                {% endif %}
+                                {% endfor %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% for tag_cat in tag_category %}
+                        {% if tag_cat != "Przedmiot rozstrzygnięcia"%}
+                        <div>
+                            {{tag_cat}}:
+                                {% for tag in tags %}
+                                {% if tag.category == tag_cat %}
+                                <label class="kontrola-checkbox">
+                                    <input type="checkbox" name="{{ tag.id }}"> {{tag.tag}}
+                                </label>
+                                {% endif %}
+                                {% endfor %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% endblock %}
+                </div>
+            </div>
+
+            <div class="pole-wyszukaj">
+                <label class="kontrola-checkbox">
+                    <input type="checkbox" name="narrow_search"> Wyszukiwanie zawężone - spójnik logiczy "i" między słowami kluczowymi
+                </label>
+            </div>
+
+            <div>
+                <input type="checkbox" class="Checkbox">
+                <div class="ikonka-ptaszek">
+                </div>
+                <p class="slowa-kluczowe">Słowa kluczowe, które chcesz pominąć:</p>
+                <div class="flex-hidden">
+                    {% block content_4%}
+                    {% for tag_cat in tag_category %}
+                        {% if tag_cat == "Przedmiot rozstrzygnięcia"%}
+                        <div>
+                            {{tag_cat}}:
+                                {% for tag in tags %}
+                                {% if tag.category == tag_cat %}
+                                <label class="kontrola-checkbox">
+                                    <input type="checkbox" name="-{{ tag.id }}"> {{tag.tag}}
+                                </label>
+                                {% endif %}
+                                {% endfor %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% for tag_cat in tag_category %}
+                        {% if tag_cat != "Przedmiot rozstrzygnięcia"%}
+                        <div>
+                            {{tag_cat}}:
+                                {% for tag in tags %}
+                                {% if tag.category == tag_cat %}
+                                <label class="kontrola-checkbox">
+                                    <input type="checkbox" name="-{{ tag.id }}"> {{tag.tag}}
+                                </label>
+                                {% endif %}
+                                {% endfor %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% endblock %}
+                </div>
+            </div>
+
+
+            <button class="button" type="reset" value="Reset"> Wyczyść kryteria szczegółowe </button>
+
+
+            <button class="button" type="submit" value="Submit">Szukaj wg kryteriów szczegółowych</button>
+        </form>
+        <div style="text-align: center">Powered by <a href="https://www.djangoproject.com/" target="_blank"> Django</a>.  </div>
+    </div>
+</body>
+</html>

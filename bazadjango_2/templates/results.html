@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+
+{% load my_functions %}
+{% load static %}
+
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Tomasz Sasiak">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"> <!-- skaluje rozmiar strony do urządzenia -->
+    <!-- <meta http-equiv="refresh" content="150"> automatycznie odświeża stronę po wskazanym czasie ;) -->
+
+
+    <link rel="icon" type="image/x-icon" href={% static 'pyramid.png' %}>
+
+    <style>
+        html{
+            background-color: rgb(173, 216, 230);
+
+            font-family: "Trebuchet MS", "Roboto Mono", system-ui, sans-serif
+        }
+
+        .main-container {
+            width: 100%
+        }
+
+
+        .main-container  div{
+            background-color: rgba(70, 130, 180, 0.4);
+            border-style: solid;
+            border-radius: 15px;
+            border-color: white;
+            border-width: 0.1em;
+            padding: 1em;
+            margin: 1em;
+        }
+
+
+        #tytul{
+            color: white;
+        }
+
+        .pole-wyszukaj{
+            width: max-content
+        }
+
+        [type="search"]{
+            border-radius: 15px;
+            height: 2em;
+            padding: 0.5em;
+            margin: 0em 1em 0em 1em;
+            cursor: pointer
+        }
+
+        [type="search"]:hover {
+            background-color: rgba(70, 130, 180, 0.7);
+            transition: 0.4s ease
+        }
+
+
+        [type="date"]{
+            border-radius: 15px;
+            height: 1em;
+            padding: 0.5em;
+            margin: 0em 1em 0em 1em;
+            cursor: pointer
+        }
+
+        [type="date"]:hover {
+            background-color: rgba(70, 130, 180, 0.7);
+            transition: 0.4s ease
+        }
+
+        .slowa-kluczowe {display: inline-block; padding: 0px; margin: 0px}
+
+        .main-container .flex-hidden{
+            display: flex;
+            background-color: transparent;
+            border-style: none;
+            border-color: none;
+            border-width: 0em;
+            padding: 0px;
+            margin: 0px;
+
+            flex-wrap: wrap;
+
+            justify-content: flex-start
+            visibility: hidden;
+            overflow: hidden;
+            max-height: 0;
+            transform: scaleY(0)
+        }
+
+        .kontrola-checkbox {
+            display: grid;
+            margin: 0.5em 0em 0.5em 0em;
+            grid-template-columns: 1em auto;
+            gap: 0.5em;
+            border-radius: 15px;
+            cursor: pointer
+        }
+
+        .kontrola-checkbox [type="checkbox"] {
+            height:15px;
+            width: 15px;
+            cursor: pointer
+        }
+
+        .kontrola-checkbox [type="checkbox"]:checked {
+            color: red
+        }
+
+        .kontrola-checkbox:hover {
+            background-color: rgba(70, 130, 180, 0.7);
+            transition: 0.4s ease
+        }
+
+        .button{
+            /*font-family: Aldrich, "Roboto Mono", system-ui, sans-serif;*/
+            font-size: 1em;
+            background-color: white;
+            border-style: solid;
+            border-radius: 15px;
+            border-color: steelblue;
+            border-width: 0.1em;
+            padding: 1em;
+            margin: 1em;
+
+            cursor: pointer
+        }
+
+        .button:hover {
+            background-color: rgba(70, 130, 180, 0.7);
+            transition: 0.4s ease
+        }
+
+        .Checkbox{
+
+            opacity: 0;
+            cursor: pointer;
+            display: inline-block;
+            position: absolute;
+            height: 50px;
+            width: 95%;
+
+        }
+
+        .main-container .ikonka-ptaszek{
+            display: inline-block;
+            position: relative;
+            z-index:-1;
+            background-image: url('{% static "expand.png" %}');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: transparent;
+            border-style: none;
+            border-color: none;
+            border-width: 0em;
+            padding: 0px;
+            margin: 0px;
+            height: 1em;
+            width: 50px;
+        }
+
+        .Checkbox:checked + .ikonka-ptaszek {
+                    transform: rotate(540deg);
+                    transition: 0.4s ease;
+            }
+
+        .Checkbox:checked ~ .flex-hidden {
+                    visibility: visible;
+                    max-height: 100%;
+                    transform: scaleY(1);
+                    transition: 0.4s ease
+            }
+
+        .main-container .Grid{
+            border: 0.1em white solid;
+	    border-radius: 0px;
+	    border-bottom: none;
+            background-color: transparent;
+            margin: 0px;
+            padding: 0px;
+            margin-top: 20px;
+            display: grid;
+
+            grid-template-columns: repeat(10, auto);
+
+
+        }
+
+        .main-container .Grid .grid-item{
+		text-align: center;
+		border-radius: 0px;
+                margin: 0px;
+		border-width: 0.05em
+        }
+
+        .main-container .Grid-2{
+            background-color: transparent;
+            border-radius: 0px;
+	    border: 0.1em white solid;
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-template-areas:
+            'a b b b b b b b b b'
+            'y z z z z z z z z z'
+            'c d d d d d d d d d'
+            'w x x x x x x x x x'
+            'e f f f f f f f f f'
+            'g h h h h h h h h h'
+            'i j j j j j j j j j'
+	        'k k k k k k k k k k';
+            margin: 0px;
+            padding: 0px;
+
+        }
+        .main-container .Grid-2 .grid-item-1,
+        .main-container .Grid-2 .grid-item-2,
+        .main-container .Grid-2 .grid-item-88,
+        .main-container .Grid-2 .grid-item-99,
+        .main-container .Grid-2 .grid-item-3,
+        .main-container .Grid-2 .grid-item-4,
+        .main-container .Grid-2 .grid-item-66,
+        .main-container .Grid-2 .grid-item-77,
+        .main-container .Grid-2 .grid-item-5,
+        .main-container .Grid-2 .grid-item-6,
+        .main-container .Grid-2 .grid-item-7,
+        .main-container .Grid-2 .grid-item-8,
+        .main-container .Grid-2 .grid-item-9,
+        .main-container .Grid-2 .grid-item-10,
+        .main-container .Grid-2 .grid-item-11 {
+            text-align: justified;
+	    border-radius: 0px;
+            margin: 0px;
+	    border-width: 0.05em
+        }
+        .main-container .Grid-2 .grid-item-1 {grid-area: a}
+        .main-container .Grid-2 .grid-item-2 {grid-area: b}
+        .main-container .Grid-2 .grid-item-88 {grid-area: y}
+        .main-container .Grid-2 .grid-item-99 {grid-area: z}
+        .main-container .Grid-2 .grid-item-3 {grid-area: c}
+        .main-container .Grid-2 .grid-item-4 {grid-area: d}
+        .main-container .Grid-2 .grid-item-66 {grid-area: w}
+        .main-container .Grid-2 .grid-item-77 {grid-area: x}
+        .main-container .Grid-2 .grid-item-5 {grid-area: e}
+        .main-container .Grid-2 .grid-item-6 {grid-area: f}
+        .main-container .Grid-2 .grid-item-7 {grid-area: g}
+        .main-container .Grid-2 .grid-item-8 {grid-area: h}
+        .main-container .Grid-2 .grid-item-9 {grid-area: i}
+        .main-container .Grid-2 .grid-item-10 {grid-area: j}
+        .main-container .Grid-2 .grid-item-11 {grid-area: k}
+    </style>
+
+
+    <title>Wyniki wyszukiwania</title>
+
+
+</head>
+<body>
+    <div class="main-container">
+
+        <div id="tytul">
+            <h1>Baza orzeczeń Departamentu Ochrony Zbiorowych Interesów Konsumentów</h1>
+        </div>
+        {% block content %}
+
+        {% if full_base %}
+        <div> <b>{{ full_base }}.</b>
+        {% elif act_signature %}
+        <div>
+            Wyszukiwanie dokonane wg następujących kryteriów:
+            <p>Sygnatura orzeczenia: <b>{{ act_signature }}</b></p>
+
+        {% elif dec_number %}
+        <div>
+            Wyszukiwanie dokonane wg następujących kryteriów:
+            <p>Numer decyzji: <b>{{ dec_number }}</b></p>
+
+        {% elif wrong_date %}
+        <div style="background-color: indianred">
+            <p>{{ wrong_date }}</p>
+            <p>Zakres dat: <b>{{ data_od }} - {{ data_do }}</b></p>
+
+        {% else %}
+        <div>
+            Wyszukiwanie dokonane wg następujących kryteriów:
+            <p>Wyszukiwana fraza: <b>{{ description }}</b></p>
+            <p>Wyszukiwani przedsiębiorcy:
+                {% if company %}
+                    <b>{% for c in company %}
+                        {{c}}
+                    {% endfor %}
+                {% endif %}</b>
+            </p>
+            <p>Zakres dat: <b>{{ data_od|date_to_empty_str }} - {{ data_do|date_to_empty_str}}</b></p>
+            <p>Sądy:
+                <b>{{ court|court_results_translate }}</b>
+            </p>
+            <p>Zakres: <b>{{ scope|scope_results_translate }}</b></p>
+            <p>Branże: <b>{{ industry|industry_results_translate }}</b></p>
+            <p>Wybrane słowa kluczowe: <b>{{ key_words_positive|key_words_translate }}</b></p>
+
+            {% if narrow_search %}
+                <p>Wyszukiwanie zawężone: <b>Tak</b></p>
+            {% else %}
+                <p>Wyszukiwanie zawężone: <b>Nie</b></p>
+            {% endif %}
+            <p>Pomijane słowa kluczowe: <b>{{ key_words_negative|key_words_translate }}</b></p>
+
+        {% endif %}
+            <p>Liczba znalezionych rekordów: <b>{{ length }}</b></p>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap">
+            <button class="button" onclick="history.back()">Cofnij</button>
+
+        {% if not wrong_date %}
+            <form action="/results/" method="POST" style="margin: 1em; padding: 1em">
+                {% csrf_token %}
+                <label class="button" for="sort_date_ascending"> Sortuj wg dat od najstarszej </label>
+                <input type="submit"  id="sort_date_ascending" name="sort_date_ascending" value=
+                    "id:{% for q in query%}{{ q.id }};{% endfor %}
+full_base:{{full_base}}
+act_signature:{{act_signature}}
+dec_number:{{dec_number}}
+description:{{description}}
+company:{% for c in company %}{{c}};{%endfor%}
+data_od:{{data_od|date_to_empty_str}}
+data_do:{{data_do|date_to_empty_str}}
+court:{{court}}
+industry:{{industry}}
+scope:{{scope}}
+key_words_positive:{{key_words_positive}}
+narrow_search:{{narrow_search}}
+key_words_negative:{{key_words_negative}}"
+
+                     style="display: none">
+            </form>
+
+            <form action="/results/" method="POST" style="margin: 1em; padding: 1em">
+                {% csrf_token %}
+                <label class="button" for="sort_date_descending"> Sortuj wg dat od najnowszej </label>
+                <input type="submit"  id="sort_date_descending" name="sort_date_descending" value=
+                    "id:{% for q in query%}{{ q.id }};{% endfor %}
+full_base:{{full_base}}
+act_signature:{{act_signature}}
+dec_number:{{dec_number}}
+description:{{description}}
+company:{% for c in company %}{{c}};{%endfor%}
+data_od:{{data_od|date_to_empty_str}}
+data_do:{{data_do|date_to_empty_str}}
+court:{{court}}
+industry:{{industry}}
+scope:{{scope}}
+key_words_positive:{{key_words_positive}}
+narrow_search:{{narrow_search}}
+key_words_negative:{{key_words_negative}}"
+
+                     style="display: none">
+            </form>
+
+            <form action="/results/" method="POST" style="margin: 1em; padding: 1em">
+                {% csrf_token %}
+                <label class="button" for="sort_company_ascending"> Sortuj wg przedsiębiorców A-Z </label>
+                <input type="submit"  id="sort_company_ascending" name="sort_company_ascending" value=
+                    "id:{% for q in query%}{{ q.id }};{% endfor %}
+full_base:{{full_base}}
+act_signature:{{act_signature}}
+dec_number:{{dec_number}}
+description:{{description}}
+company:{% for c in company %}{{c}};{%endfor%}
+data_od:{{data_od|date_to_empty_str}}
+data_do:{{data_do|date_to_empty_str}}
+court:{{court}}
+industry:{{industry}}
+scope:{{scope}}
+key_words_positive:{{key_words_positive}}
+narrow_search:{{narrow_search}}
+key_words_negative:{{key_words_negative}}"
+
+                     style="display: none">
+            </form>
+
+
+            <form action="/results/" method="POST" style="margin: 1em; padding: 1em">
+                {% csrf_token %}
+                <label class="button" for="sort_company_descending"> Sortuj wg przedsiębiorców Z-A </label>
+                <input type="submit"  id="sort_company_descending" name="sort_company_descending" value=
+                    "id:{% for q in query%}{{ q.id }};{% endfor %}
+full_base:{{full_base}}
+act_signature:{{act_signature}}
+dec_number:{{dec_number}}
+description:{{description}}
+company:{% for c in company %}{{c}};{%endfor%}
+data_od:{{data_od|date_to_empty_str}}
+data_do:{{data_do|date_to_empty_str}}
+court:{{court}}
+industry:{{industry}}
+scope:{{scope}}
+key_words_positive:{{key_words_positive}}
+narrow_search:{{narrow_search}}
+key_words_negative:{{key_words_negative}}"
+
+                     style="display: none">
+            </form>
+
+            <form action="/results/" method="POST" style="margin: 1em; padding: 1em">
+                {% csrf_token %}
+                <label class="button" for="sort_court_ascending"> Sortuj wg sądu A-Z </label>
+                <input type="submit"  id="sort_court_ascending" name="sort_court_ascending" value=
+                    "id:{% for q in query%}{{ q.id }};{% endfor %}
+full_base:{{full_base}}
+act_signature:{{act_signature}}
+dec_number:{{dec_number}}
+description:{{description}}
+company:{% for c in company %}{{c}};{%endfor%}
+data_od:{{data_od|date_to_empty_str}}
+data_do:{{data_do|date_to_empty_str}}
+court:{{court}}
+industry:{{industry}}
+scope:{{scope}}
+key_words_positive:{{key_words_positive}}
+narrow_search:{{narrow_search}}
+key_words_negative:{{key_words_negative}}"
+
+                     style="display: none">
+            </form>
+
+            <form action="/results/" method="POST" style="margin: 1em; padding: 1em">
+                {% csrf_token %}
+                <label class="button" for="sort_court_descending"> Sortuj wg sądu Z-A</label>
+                <input type="submit"  id="sort_court_descending" name="sort_court_descending" value=
+                    "id:{% for q in query%}{{ q.id }};{% endfor %}
+full_base:{{full_base}}
+act_signature:{{act_signature}}
+dec_number:{{dec_number}}
+description:{{description}}
+company:{% for c in company %}{{c}};{%endfor%}
+data_od:{{data_od|date_to_empty_str}}
+data_do:{{data_do|date_to_empty_str}}
+court:{{court}}
+industry:{{industry}}
+scope:{{scope}}
+key_words_positive:{{key_words_positive}}
+narrow_search:{{narrow_search}}
+key_words_negative:{{key_words_negative}}"
+
+                     style="display: none">
+            </form>
+
+        {% endif %}
+        <button class="button" onclick="window.location.href='http://baza-orzeczen-dozik.uokik.gov.pl/'">Nowe wyszukiwanie</button>
+        </div>
+
+
+        <div>Wyniki wyszukiwania:
+            {% for q in query %}
+            <div class="Grid">
+                <div class="grid-item">Data rozstrzygnięcia</div>
+                <div class="grid-item">Sygnatura akt</div>
+                <div class="grid-item">Sąd</div>
+                <div class="grid-item">Rodzaj rozstrzygnięcia</div>
+
+                <div class="grid-item">Zakres</div>
+
+                <div class="grid-item">Dotyczy wyroku/postanowienia sądu</div>
+                <div class="grid-item">Numer decyzji/postanowienia</div>
+                <div class="grid-item">Data wydania decyzji</div>
+                <div class="grid-item">Link do wyroku Word</div>
+                <div class="grid-item">Link do wyroku Pdf</div>
+                <div class="grid-item">{{ q.date_of_dec|date:"d-m-Y" }}</div>
+                <div class="grid-item"> <a href="/act/{{ q.id }}" target="_blank"> {{ q.act_signature }} </a></div>
+                <div class="grid-item">{{ q.court }}</div>
+                <div class="grid-item">{{ q.type_of_dec}}</div>
+
+                <div class="grid-item">{{ q.scope|scope_translate }}</div>
+
+                <div class="grid-item">{{ q.previous_dec }}</div>
+                <div class="grid-item">{{ q.source_dec }}</div>
+                {% if q.date_of_source_dec %}
+                    <div class="grid-item">{{ q.date_of_source_dec|date:"d-m-Y" }}</div>
+                {% else %}
+                    <div class="grid-item"> - </div>
+                {% endif %}
+                {% if q.act_doc %}
+                    <div class="grid-item"><a href="{{ q.act_doc.url }}"> .doc </a></div>
+                {% else %}
+                    <div class="grid-item">brak pliku</div>
+                {% endif %}
+                {% if q.act_pdf %}
+                    <div class="grid-item"><a href="{{ q.act_pdf.url }}"> .pdf </a></div>
+                {% else %}
+                    <div class="grid-item">brak pliku</div>
+                {% endif %}
+            </div>
+            <div class="Grid-2">
+                <div class="grid-item-1">Nazwa Przedsiębiorcy</div>
+                <div class="grid-item-2">{{ q.company }}</div>
+                <div class="grid-item-88">Branża Przedsiębiorcy</div>
+                <div class="grid-item-99">{{ q.industry }}</div>
+                <div class="grid-item-3">Słowa kluczowe</div>
+                <div class="grid-item-4">{{ q.key_words|key_words_trimmer }}</div>
+                <div class="grid-item-66">Rozstrzygnięcia powiązane</div>
+                <div class="grid-item-77" style="display: flex; align-items: center">
+                    {% for act in q.related_acts.all %}
+                    <div style="margin: 0px 2em 0px 0em; padding: 0px; border: none; background: none"><a href="/act/{{ act.id }}" target="_blank"> {{ act.act_signature }} </a></div>
+                    {% endfor %}
+                </div>
+                <div class="grid-item-5">Przedmiot rozstrzygnięcia</div>
+                <div class="grid-item-6" style="white-space: pre-line">{{ q.subject_of_act }}</div>
+                <div class="grid-item-7">Główne zarzuty strony</div>
+                <div class="grid-item-8">{{ q.main_allegations }}</div>
+                <div class="grid-item-9">Tezy sądu</div>
+                <div class="grid-item-10">{{ q.court_theses }}</div>
+                <div class="grid-item-11">
+
+                    <input type="checkbox" class="Checkbox">
+                        <div class="ikonka-ptaszek">
+                        </div>
+                    <p class="slowa-kluczowe">Cytaty:</p>
+                        <div class="flex-hidden">
+                                        <p style="white-space: pre-wrap">{{q.quotes}}</p>
+                        </div>
+                </div>
+
+            </div>
+            {% endfor %}
+
+
+        </div>
+        {% endblock %}
+        <button class="button" onclick="history.back()">Cofnij</button>
+        <button class="button" onclick="window.location.href='http://baza-orzeczen-dozik.uokik.gov.pl/'">Nowe wyszukiwanie</button>
+        <div style="text-align: center">Powered by <a href="https://www.djangoproject.com/" target="_blank"> Django</a>.  </div>
+    </div>
+</body>
+</html>
